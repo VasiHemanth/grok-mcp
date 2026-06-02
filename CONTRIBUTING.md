@@ -20,11 +20,11 @@ To exercise the live path you need the Grok Build CLI installed (`grok --version
 
 ## Project layout
 
-- `plugins/grok/scripts/lib/` — shared runtime (`grok.mjs` wraps `grok -p`)
-- `plugins/grok/scripts/grok-companion.mjs` — CLI behind the slash commands
-- `plugins/grok/scripts/grok-mcp.mjs` — MCP server exposing `grok_search`
-- `plugins/grok/commands/`, `agents/`, `skills/` — Claude Code / Grok plugin components
-- `tests/` — `node --test` suites
+- `plugins/grok/scripts/lib/`: shared runtime (`grok.mjs` wraps `grok -p`)
+- `plugins/grok/scripts/grok-companion.mjs`: CLI behind the slash commands
+- `plugins/grok/scripts/grok-mcp.mjs`: MCP server exposing `grok_search`
+- `plugins/grok/commands/`, `agents/`, `skills/`: Claude Code / Grok plugin components
+- `tests/`: `node --test` suites
 
 ## Making changes
 

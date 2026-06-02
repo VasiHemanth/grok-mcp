@@ -21,9 +21,9 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/grok-companion.mjs" <subcommand> [flags] [te
 | `review [--base <ref>] [--background] [--model <m>] [focus]` | Read-only code review of a git diff | `read_file, grep, list_dir, web_search, web_fetch` |
 | `task <text> [--background] [--resume-last\|--fresh] [--read-only] [--model <m>] [--effort <low\|medium\|high>]` | Delegate work; write-capable by default | full (or read-only with `--read-only`) |
 | `search <query> [--background] [--model <m>]` | Live X/web search | `web_search, web_fetch, read_file, grep, list_dir` |
-| `status [--job <id>]` | List or show jobs | — |
-| `result [--job <id>]` | Final output + Grok session id | — |
-| `cancel [--job <id>]` | Cancel a running job | — |
+| `status [--job <id>]` | List or show jobs | n/a |
+| `result [--job <id>]` | Final output + Grok session id | n/a |
+| `cancel [--job <id>]` | Cancel a running job | n/a |
 
 ## Key facts
 
