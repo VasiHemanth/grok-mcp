@@ -1,10 +1,18 @@
 {
-  "name": "grok-plugin-cc",
+  "name": "grok-mcp",
   "version": "0.1.0",
-  "description": "Use Grok Build from Claude Code for live X/web search, code review, and task delegation.",
+  "description": "Use Grok Build's live X/web search and coding agent from any MCP-capable coding agent (Claude Code, Codex, Cursor) plus a native Claude Code plugin.",
   "type": "module",
   "private": false,
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<your-org>/grok-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/<your-org>/grok-mcp/issues"
+  },
+  "homepage": "https://github.com/<your-org>/grok-mcp#readme",
   "engines": {
     "node": ">=18.18"
   },
@@ -12,12 +20,17 @@
     "test": "node --test \"tests/*.test.mjs\""
   },
   "keywords": [
-    "claude-code",
-    "claude-code-plugin",
+    "mcp",
+    "model-context-protocol",
     "grok",
     "grok-build",
     "xai",
     "x-search",
-    "coding-agent"
+    "claude-code",
+    "claude-code-plugin",
+    "codex",
+    "cursor",
+    "coding-agent",
+    "cross-agent"
   ]
 }

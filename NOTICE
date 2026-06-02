@@ -1,0 +1,31 @@
+grok-mcp
+Copyright 2026 Grok Plugin Contributors  (replace with your name/org)
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+----------------------------------------------------------------------
+Attribution / acknowledgement
+----------------------------------------------------------------------
+
+This project is an INDEPENDENT implementation. Its plugin layout and
+command surface were inspired by the architecture of:
+
+  openai/codex-plugin-cc  (https://github.com/openai/codex-plugin-cc)
+  Licensed under the Apache License, Version 2.0.
+
+No source code from that project was copied into this repository; the
+runtime here is an original implementation that wraps the Grok Build CLI.
+This acknowledgement is provided as a courtesy.
+
+----------------------------------------------------------------------
+Trademarks
+----------------------------------------------------------------------
+
+"Grok" and "Grok Build" are trademarks of xAI. "Claude" and "Claude Code"
+are trademarks of Anthropic. "Codex" is a trademark of OpenAI. "Cursor"
+and "Antigravity" are trademarks of their respective owners.
+
+This is an unofficial, community-maintained project. It is not affiliated
+with, endorsed by, or sponsored by xAI, Anthropic, OpenAI, Google, or any
+other vendor. Product names are used only to describe interoperability
+(nominative use).

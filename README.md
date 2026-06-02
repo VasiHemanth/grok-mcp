@@ -1,14 +1,16 @@
-# Grok plugin for Claude Code
+# grok-mcp — Grok Build for any coding agent
 
-Use **Grok Build** from inside Claude Code — for **live X (Twitter) and web search**, read-only code reviews, and delegating coding tasks to Grok.
+Bring **Grok Build's live X (Twitter) + web search** (and its coding agent) into the tools you already use. Two ways to consume it:
 
-This plugin is for Claude Code users who want to bring Grok's real-time knowledge of X and the web, plus a second coding agent, into the workflow they already have. It is part of a broader effort to let Claude Code orchestrate multiple specialized coding agents (Codex, Gemini, Grok) so it can pull in the right context and capabilities for each task.
+- **An MCP tool (`grok_search`)** — works in **any MCP-capable agent**: Claude Code, OpenAI Codex, Cursor, and others. This is the cross-agent, real-time-search core.
+- **A Claude Code / Grok plugin** — convenience slash commands (`/grok:search`, `/grok:review`, `/grok:rescue`, …) plus a delegation subagent, with the MCP tool auto-wired in.
 
-> **Why Grok?** Grok Build has native, real-time access to X and the web. That makes it especially strong for breaking news, social sentiment, current package/version facts, and anything where "what's true right now" matters — exactly the context a model's training cutoff can't provide.
+Grok Build has native, real-time access to X and the web — strong for breaking news, social sentiment, current package/version facts, and anything where "what's true right now" matters, which a model's training cutoff can't provide. This project is a thin, auditable wrapper around your local `grok` CLI.
 
 ## What you get
 
-- `/grok:search` — **the headline feature**: search X and the web in real time and get an answer with sources
+- **`grok_search` MCP tool** — live X/web search with sources, callable autonomously by any MCP-capable agent (the cross-agent core)
+- `/grok:search` — the same search as an explicit slash command
 - `/grok:review` — a read-only Grok code review of your uncommitted changes or a branch
 - `/grok:rescue` — delegate a coding/investigation task to Grok (write-capable)
 - `/grok:status`, `/grok:result`, `/grok:cancel` — manage background jobs
@@ -26,13 +28,13 @@ This plugin is for Claude Code users who want to bring Grok's real-time knowledg
 Add the marketplace in Claude Code:
 
 ```bash
-/plugin marketplace add <your-org>/grok-plugin-cc
+/plugin marketplace add <your-org>/grok-mcp
 ```
 
 Install the plugin:
 
 ```bash
-/plugin install grok@grok-build
+/plugin install grok@grok-mcp
 ```
 
 Reload plugins:
@@ -130,6 +132,26 @@ Background jobs run the headless turn in a detached process, streaming output to
 | `GROK_BIN` | Path to the `grok` binary if it isn't named `grok` on `PATH`. |
 | `GROK_CC_STATE_DIR` | Override the background-job state directory (used by tests). |
 
+## Use the search tool from any agent (MCP)
+
+The `grok_search` tool lives in one file — `plugins/grok/scripts/grok-mcp.mjs` — a dependency-free MCP server (JSON-RPC over stdio). When you install the plugin in Claude Code or Grok, it's wired up automatically via `.mcp.json`. Any **other** MCP-capable agent can use the exact same file by pointing its own MCP config at it:
+
+```jsonc
+// e.g. OpenAI Codex / Cursor MCP config
+{
+  "mcpServers": {
+    "grok": {
+      "command": "node",
+      "args": ["/absolute/path/to/grok-mcp/plugins/grok/scripts/grok-mcp.mjs"]
+    }
+  }
+}
+```
+
+Then the agent can call `grok_search(query)` on its own whenever it needs current information. It returns a synthesized answer plus a Sources list (including `x.com` links). The tool is read-only (Grok is restricted to `web_search`/`web_fetch`).
+
+> MCP is a vendor-neutral protocol, but each host has its own config format and its own subset of features — so the same server works across hosts with a little per-host setup, not zero-config everywhere. (Codex and Cursor support MCP today; check your agent's docs.)
+
 ## Cross-harness: install in Grok too
 
 This plugin follows the shared plugin spec, so it installs into **Grok Build** as a native plugin as well as into Claude Code. Grok reads Claude-format marketplaces, scans `~/.claude/skills/`, honors `~/.claude/settings.json`, and maps a plugin's `commands/` into its own skill/slash-command system. Verified with `grok plugin validate` and a full install cycle.
@@ -142,8 +164,8 @@ grok plugin validate ./plugins/grok
 grok plugin install ./plugins/grok --trust
 
 # Or from a published repo / marketplace
-grok plugin install <your-org>/grok-plugin-cc#plugins/grok --trust
-grok plugin marketplace add <your-org>/grok-plugin-cc
+grok plugin install <your-org>/grok-mcp#plugins/grok --trust
+grok plugin marketplace add <your-org>/grok-mcp
 
 grok plugin list          # confirm it's installed
 grok inspect              # see its skills/agents/commands (tagged `plugin: grok`)
@@ -157,15 +179,18 @@ When installed, Grok surfaces the `grok-runtime` skill, the `grok-rescue` agent,
 ## Development
 
 ```bash
-npm test    # runs the runtime unit tests
+npm test    # runtime unit tests + MCP server smoke tests (no Grok account needed)
 ```
 
 The runtime lives in `plugins/grok/scripts/`:
 
-- `grok-companion.mjs` — CLI dispatcher for all subcommands
-- `lib/grok.mjs` — headless `grok` invocation + result parsing
+- `grok-mcp.mjs` — MCP server exposing the `grok_search` tool (cross-agent)
+- `grok-companion.mjs` — CLI dispatcher behind the slash commands
+- `lib/grok.mjs` — headless `grok` invocation + result parsing (shared by both)
 - `lib/jobs.mjs` — background-job tracking and log replay
 - `lib/git.mjs`, `lib/prompts.mjs`, `lib/args.mjs`, `lib/render.mjs`, `lib/process.mjs` — supporting helpers
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup and conventions.
 
 ## FAQ
 
@@ -178,8 +203,12 @@ No. It delegates to your local `grok` CLI on the same machine, with the same aut
 **Is the review really read-only?**
 Yes. Review and search runs are restricted to read-only tools, so Grok cannot edit files or run shell commands during them. `/grok:rescue` is write-capable by default (use `--read-only` to restrict it).
 
+## Credits
+
+Independent implementation. Its plugin layout and command surface were inspired by the architecture of [openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc) (Apache-2.0); no source code was copied. See [NOTICE](./NOTICE).
+
 ## License
 
 Apache-2.0. See [LICENSE](./LICENSE).
 
-> This is a community plugin and is not affiliated with or endorsed by xAI or Anthropic.
+> **Unofficial / community project.** Not affiliated with, endorsed by, or sponsored by xAI, Anthropic, OpenAI, Google, or any other vendor. "Grok", "Claude Code", "Codex", "Cursor", and "Antigravity" are trademarks of their respective owners; names are used only to describe interoperability. You are responsible for complying with xAI and X terms when using your Grok CLI through this tool.
