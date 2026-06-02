@@ -47,6 +47,18 @@ export function writeJob(cwd, job) {
   return file;
 }
 
+/**
+ * Read the latest job record and merge a patch into it, then write atomically.
+ * Used so the parent (setting pid) and the detached worker (setting status /
+ * sessionId) never clobber each other with a stale snapshot.
+ */
+export function updateJob(cwd, jobId, patch) {
+  const current = readJob(cwd, jobId) ?? { id: jobId };
+  const merged = { ...current, ...patch };
+  writeJob(cwd, merged);
+  return merged;
+}
+
 export function readJob(cwd, jobId) {
   const file = jobPath(cwd, jobId);
   if (!existsSync(file)) {

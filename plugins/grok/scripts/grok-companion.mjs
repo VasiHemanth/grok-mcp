@@ -18,6 +18,7 @@ import { buildReviewPrompt, buildSearchPrompt } from "./lib/prompts.mjs";
 import {
   newJobId,
   writeJob,
+  updateJob,
   readJob,
   listJobs,
   latestJob,
@@ -138,9 +139,9 @@ function runBackground(cwd, { kind, prompt, runOptions }) {
   });
   child.unref();
 
-  job.pid = child.pid;
-  writeJob(cwd, job);
-  return job;
+  // Merge the pid in without clobbering a fast worker that may already have
+  // written its finished status + sessionId.
+  return updateJob(cwd, jobId, { pid: child.pid });
 }
 
 // Write a turn result into a job log as streaming-json so readJobOutput can
@@ -169,20 +170,19 @@ function decodePayload(str) {
 async function cmdRun(cwd, flags) {
   const jobId = flags.job;
   const payload = decodePayload(flags.payload);
-  const logPath = logPathFor(cwd, jobId);
-  const job = readJob(cwd, jobId) ?? { id: jobId };
+  const patch = { status: "failed", sessionId: null };
 
   try {
     const result = await runGrokTurn(cwd, { ...payload.runOptions, prompt: payload.prompt });
     persistResultLog(cwd, jobId, result);
-    job.status = result.status === 0 ? "finished" : "failed";
-    job.sessionId = result.sessionId;
+    patch.status = result.status === 0 ? "finished" : "failed";
+    patch.sessionId = result.sessionId;
   } catch (error) {
-    appendFileSync(logPath, `${JSON.stringify({ type: "text", data: `Worker error: ${error.message}` })}\n`);
-    job.status = "failed";
+    appendFileSync(logPathFor(cwd, jobId), `${JSON.stringify({ type: "text", data: `Worker error: ${error.message}` })}\n`);
   } finally {
-    job.finishedAt = new Date().toISOString();
-    writeJob(cwd, job);
+    patch.finishedAt = new Date().toISOString();
+    // Merge so we keep the pid the parent recorded.
+    updateJob(cwd, jobId, patch);
   }
   return 0;
 }

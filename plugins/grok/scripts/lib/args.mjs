@@ -6,7 +6,16 @@
  * Everything else is collected as positional "rest" text — the natural
  * language task/prompt.
  */
-const VALUE_FLAGS = new Set(["--model", "--effort", "--base", "--session", "--job", "--max-turns", "--cwd"]);
+const VALUE_FLAGS = new Set([
+  "--model",
+  "--effort",
+  "--base",
+  "--session",
+  "--job",
+  "--max-turns",
+  "--cwd",
+  "--payload"
+]);
 const BOOL_FLAGS = new Set([
   "--json",
   "--background",

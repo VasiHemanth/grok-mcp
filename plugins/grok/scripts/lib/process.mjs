@@ -109,23 +109,37 @@ export function processAlive(pid) {
   }
 }
 
-/** Best-effort terminate a pid (SIGTERM then SIGKILL). */
+/**
+ * Best-effort terminate a pid (SIGTERM then SIGKILL). Background workers are
+ * spawned with `detached: true`, so they lead their own process group; we try
+ * to signal the whole group (`-pid`) first to also reap the `grok` grandchild,
+ * then fall back to the single pid.
+ */
+function signal(pid, sig) {
+  try {
+    process.kill(-pid, sig); // process group
+    return true;
+  } catch {
+    try {
+      process.kill(pid, sig);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
 export function terminateProcess(pid) {
   if (!processAlive(pid)) {
     return false;
   }
-  try {
-    process.kill(pid, "SIGTERM");
-  } catch {
+  const sent = signal(pid, "SIGTERM");
+  if (!sent) {
     return false;
   }
   setTimeout(() => {
     if (processAlive(pid)) {
-      try {
-        process.kill(pid, "SIGKILL");
-      } catch {
-        /* already gone */
-      }
+      signal(pid, "SIGKILL");
     }
   }, 2_000).unref?.();
   return true;

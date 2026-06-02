@@ -1,0 +1,23 @@
+{
+  "name": "grok-plugin-cc",
+  "version": "0.1.0",
+  "description": "Use Grok Build from Claude Code for live X/web search, code review, and task delegation.",
+  "type": "module",
+  "private": false,
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\""
+  },
+  "keywords": [
+    "claude-code",
+    "claude-code-plugin",
+    "grok",
+    "grok-build",
+    "xai",
+    "x-search",
+    "coding-agent"
+  ]
+}
