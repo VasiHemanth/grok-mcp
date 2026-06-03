@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in improving grok-mcp! This is a community project.
+Thanks for your interest in improving grok-build-plugin! This is a community project.
 
 ## Ground rules
 
@@ -11,8 +11,8 @@ Thanks for your interest in improving grok-mcp! This is a community project.
 ## Development setup
 
 ```bash
-git clone https://github.com/VasiHemanth/grok-mcp.git
-cd grok-mcp
+git clone https://github.com/VasiHemanth/grok-build-plugin.git
+cd grok-build-plugin
 npm test        # runs the unit + MCP smoke tests (no Grok account required)
 ```
 

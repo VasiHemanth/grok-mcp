@@ -7,12 +7,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VasiHemanth/grok-mcp.git"
+    "url": "git+https://github.com/VasiHemanth/grok-build-plugin.git"
   },
   "bugs": {
-    "url": "https://github.com/VasiHemanth/grok-mcp/issues"
+    "url": "https://github.com/VasiHemanth/grok-build-plugin/issues"
   },
-  "homepage": "https://github.com/VasiHemanth/grok-mcp#readme",
+  "homepage": "https://github.com/VasiHemanth/grok-build-plugin#readme",
   "bin": {
     "grok-build-x-search-mcp": "plugins/grok/scripts/grok-mcp.mjs"
   },

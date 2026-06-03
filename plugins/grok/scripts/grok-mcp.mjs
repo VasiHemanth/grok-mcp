@@ -115,7 +115,7 @@ process.stdin.on("data", (chunk) => {
       continue; // ignore non-JSON lines
     }
     Promise.resolve(handle(message)).catch((error) => {
-      process.stderr.write(`grok-mcp error: ${error?.message ?? error}\n`);
+      process.stderr.write(`grok-build-plugin error: ${error?.message ?? error}\n`);
     });
   }
 });

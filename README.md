@@ -1,4 +1,4 @@
-# grok-mcp: Grok Build for any coding agent
+# grok-build-plugin: Grok Build for any coding agent
 
 > Want Claude Code, Codex, or Cursor to drive Grok Build? If you already pay for a Grok subscription, this gives any of those agents live X search and data right in their context. A couple of ways to wire it up.
 
@@ -51,13 +51,13 @@ Then just ask your agent to "search X for ..." and it will call `grok_search`. V
 Add the marketplace in Claude Code:
 
 ```bash
-/plugin marketplace add VasiHemanth/grok-mcp
+/plugin marketplace add VasiHemanth/grok-build-plugin
 ```
 
 Install the plugin:
 
 ```bash
-/plugin install grok@grok-mcp
+/plugin install grok@grok-build-plugin
 ```
 
 Reload plugins:
@@ -189,11 +189,11 @@ Tested live with the `npx` launch (both `github:` during development and the pub
 
 ### Why `npx grok-build-x-search-mcp` (preferred) or `npx github:...`
 
-MCP clients resolve plugin paths differently. Claude Code and Grok substitute `${CLAUDE_PLUGIN_ROOT}`, but **Codex does not**, so a `${CLAUDE_PLUGIN_ROOT}`-based manifest fails there. Using the published package (`npx -y grok-build-x-search-mcp`) or `npx -y github:VasiHemanth/grok-mcp` sidesteps all of it: npm hands every harness a correct absolute path, and the server resolves its own imports relative to itself (not the working directory). One manifest, every agent.
+MCP clients resolve plugin paths differently. Claude Code and Grok substitute `${CLAUDE_PLUGIN_ROOT}`, but **Codex does not**, so a `${CLAUDE_PLUGIN_ROOT}`-based manifest fails there. Using the published package (`npx -y grok-build-x-search-mcp`) or `npx -y github:VasiHemanth/grok-build-plugin` sidesteps all of it: npm hands every harness a correct absolute path, and the server resolves its own imports relative to itself (not the working directory). One manifest, every agent.
 
 The published package on npm gives the fastest cold start (no git clone). The `github:` form still works as a fallback / for development and always points at the latest from the repo.
 
-> Publishing the MCP server part to npm as `grok-build-x-search-mcp` (distinct from the plugin marketplace name) is now complete for v0.1.0+. The repo and the Claude/Grok *plugin* remain under `grok-mcp` on GitHub for marketplace installs.
+> Publishing the MCP server part to npm as `grok-build-x-search-mcp` (distinct from the plugin marketplace name) is now complete for v0.1.0+. The repo is `grok-build-plugin` on GitHub (was previously `grok-mcp`). The Claude/Grok *plugin* is installed via the marketplace using the repo name.
 
 ## Cross-harness: install in Grok too
 
@@ -207,8 +207,8 @@ grok plugin validate ./plugins/grok
 grok plugin install ./plugins/grok --trust
 
 # Or from a published repo / marketplace
-grok plugin install VasiHemanth/grok-mcp#plugins/grok --trust
-grok plugin marketplace add VasiHemanth/grok-mcp
+grok plugin install VasiHemanth/grok-build-plugin#plugins/grok --trust
+grok plugin marketplace add VasiHemanth/grok-build-plugin
 
 grok plugin list          # confirm it's installed
 grok inspect              # see its skills/agents/commands (tagged `plugin: grok`)
@@ -227,7 +227,7 @@ npm test    # runtime unit tests + MCP server smoke tests (no Grok account neede
 
 The runtime lives in `plugins/grok/scripts/`:
 
-- `grok-mcp.mjs`: MCP server exposing the `grok_search` tool (cross-agent)
+- `grok-mcp.mjs`: the MCP server (source) exposing the `grok_search` tool (cross-agent; published separately to npm as grok-build-x-search-mcp)
 - `grok-companion.mjs`: CLI dispatcher behind the slash commands
 - `lib/grok.mjs`: headless `grok` invocation + result parsing (shared by both)
 - `lib/jobs.mjs`: background-job tracking and log replay

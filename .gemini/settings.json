@@ -4,7 +4,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "github:VasiHemanth/grok-mcp"
+        "grok-build-x-search-mcp"
       ]
     }
   }
