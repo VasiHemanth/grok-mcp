@@ -136,7 +136,7 @@ Background jobs run the headless turn in a detached process, streaming output to
 
 ## Use the search tool from any agent (MCP)
 
-`grok_search` is a dependency-free MCP server (JSON-RPC over stdio), published to npm so any agent can launch it with `npx`. No paths, no plugin variables, no build step.
+`grok_search` is a dependency-free MCP server (JSON-RPC over stdio). It runs straight from this repo with `npx`, so there's nothing to publish or build, and it's the same one repo as the plugin.
 
 For Claude Code and Grok, the bundled plugin wires it up automatically. For any other MCP-capable agent, add this to its MCP config:
 
@@ -146,7 +146,7 @@ For Claude Code and Grok, the bundled plugin wires it up automatically. For any 
   "mcpServers": {
     "grok": {
       "command": "npx",
-      "args": ["-y", "grok-x-search-mcp"]
+      "args": ["-y", "github:VasiHemanth/grok-mcp"]
     }
   }
 }
@@ -154,9 +154,11 @@ For Claude Code and Grok, the bundled plugin wires it up automatically. For any 
 
 Then the agent can call `grok_search(query)` on its own whenever it needs current information. It returns a synthesized answer plus a Sources list (including `x.com` links). The tool is read-only (Grok is restricted to `web_search`/`web_fetch`). It uses your local `grok` CLI, so you must have it installed and signed in.
 
-### Why `npx` instead of a file path
+### Why `npx github:...` instead of a file path
 
-MCP clients resolve plugin paths differently. Claude Code and Grok substitute `${CLAUDE_PLUGIN_ROOT}`, but **Codex does not**, so a `${CLAUDE_PLUGIN_ROOT}`-based manifest fails there. `npx -y grok-x-search-mcp` sidesteps all of it: npm hands every harness the correct absolute path, and the server resolves its own imports relative to itself (not the working directory). One manifest, every agent. (The npm package is `grok-x-search-mcp` because `grok-mcp` was already taken on npm; the repo and plugin are still `grok-mcp`.)
+MCP clients resolve plugin paths differently. Claude Code and Grok substitute `${CLAUDE_PLUGIN_ROOT}`, but **Codex does not**, so a `${CLAUDE_PLUGIN_ROOT}`-based manifest fails there. Launching from the repo with `npx -y github:VasiHemanth/grok-mcp` sidesteps all of it: npm hands every harness a correct absolute path, and the server resolves its own imports relative to itself (not the working directory). One manifest, every agent, one repo, no publish step.
+
+> The first launch clones the repo (a few seconds); after that npm caches it. If you later want faster cold starts, you can publish the server to the npm registry under a scoped name (`@your-npm-user/grok-mcp`, since bare `grok-mcp` is taken) and switch the `args` to `["-y", "@your-npm-user/grok-mcp"]`.
 
 ## Cross-harness: install in Grok too
 
