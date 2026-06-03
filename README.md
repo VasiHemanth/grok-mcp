@@ -19,6 +19,27 @@ Grok Build has native, real-time access to X and the web, strong for breaking ne
 - `/grok:setup`: verify Grok is installed and signed in
 - a `grok:grok-rescue` subagent that Claude can hand substantial tasks to proactively
 
+## Quick start: add `grok_search` to your agent
+
+Works today in any MCP-capable agent, no install or publish step. You just need the [Grok Build CLI](https://docs.x.ai) signed in (`grok login`).
+
+```jsonc
+// drop into your agent's MCP config (see the per-agent table below for the path)
+{
+  "mcpServers": {
+    "grok": { "command": "npx", "args": ["-y", "github:VasiHemanth/grok-mcp"] }
+  }
+}
+```
+
+Or one line for **OpenAI Codex**:
+
+```bash
+codex mcp add grok -- npx -y github:VasiHemanth/grok-mcp
+```
+
+Then just ask your agent to "search X for ..." and it will call `grok_search`. Verified live in Codex, Antigravity (`agy`), and Gemini CLI. Full per-agent paths are in [Per-agent setup](#per-agent-setup).
+
 ## Requirements
 
 - **Grok Build CLI** installed and on your `PATH` as `grok` (or point `GROK_BIN` at it). Verify with `grok --version`.
