@@ -33,11 +33,15 @@ jobs:
       contents: read
       id-token: write   # Enables npm provenance / trusted publishing (recommended)
 
+    env:
+      # Opt into Node.js 24 for actions to avoid deprecation of Node 20 (effective June 2026)
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           registry-url: "https://registry.npmjs.org"
       - run: npm test
       # Pure OIDC publish via the Trusted Publisher registered on npm.
