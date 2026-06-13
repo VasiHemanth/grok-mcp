@@ -43,6 +43,10 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
+      - name: Configure registry for OIDC only (override any token auth from setup-node)
+        run: |
+          echo "registry=https://registry.npmjs.org/" > $NPM_CONFIG_USERCONFIG
+          echo "always-auth=true" >> $NPM_CONFIG_USERCONFIG
       - run: npm test
       # Pure OIDC publish via the Trusted Publisher registered on npm.
       # No NODE_AUTH_TOKEN / NPM_TOKEN secret is used.
